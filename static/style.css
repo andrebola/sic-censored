@@ -1,0 +1,52 @@
+:root {
+    --pulse: #009cb3;
+    --pulse-light: #5bad8b; 
+    --pulse-dark: #3f869b;
+    --pad: 20px;
+}
+
+html {
+    background: linear-gradient(to right,var(--pulse-dark) 0,var(--pulse-light) 100%);
+}
+
+nav {
+    z-index: 2000;
+    position: fixed;
+    height: 7.5vh;
+    width: 100%;
+    background-color: ghostwhite;
+    box-shadow: 0 0 40px rgba(5,5,38,0.1);
+    display: grid !important;
+    grid-template-columns: var(--pad) [ini] max-content [end] var(--pad);
+    grid-template-rows: 1fr;
+}
+
+.title {
+    color: var(--pulse);
+    margin: 0;
+    width: max-content;
+    font-size: xx-large;
+    grid-column-start: ini;
+    grid-column-start: end;
+    align-self: center;
+}
+
+.hero {
+    height: max-content;
+    width: 100%;
+}
+
+#mapid {
+    height: 80vh;
+}
+
+main {
+    height: max-content;
+    width: 100%;
+}
+
+main > div  {
+    background-color: ghostwhite;
+    height: 1vh;
+    width: 100%;
+}
