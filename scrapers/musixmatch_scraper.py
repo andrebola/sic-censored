@@ -37,7 +37,7 @@ class Musixmatch(object):
                 if 'track' in lyric['page']:
                     extra_data = lyric['page']['track']
                 lyric_content = lyric['page']['lyrics']['lyrics']['body']
-                ret.append((extra_data, lyric_content))
+                ret.append((extra_data, [lyric_content]))
                 print ("Collected lyric ", url)
             except Exception as e:
                 print (e, url)
