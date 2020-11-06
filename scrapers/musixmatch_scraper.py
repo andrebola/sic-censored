@@ -32,8 +32,12 @@ class Musixmatch(object):
             try:
                 time.sleep(1)
                 lyric = self._get_lyrics_from_url(url)
-                #pprint.pprint (lyric['page']['lyrics'])
-                ret.append(lyric['page']['lyrics']['lyrics']['body'])
+                #pprint.pprint (lyric)
+                extra_data = ""
+                if 'track' in lyric['page']:
+                    extra_data = lyric['page']['track']
+                lyric_content = lyric['page']['lyrics']['lyrics']['body']
+                ret.append((extra_data, lyric_content))
                 print ("Collected lyric ", url)
             except Exception as e:
                 print (e, url)
