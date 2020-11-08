@@ -8,9 +8,13 @@ import argparse
 
 class Musixmatch(object):
 
-    def _search(self, artist):
-        search = urllib.parse.quote_plus(artist.encode('utf-8'))
+    def _search(self, artist, title=None):
+        if title != None:
+            search = urllib.parse.quote_plus("%s %s" % (artist, title))
+        else:
+            search = urllib.parse.quote_plus(artist.encode('utf-8'))
         url = 'https://www.musixmatch.com/search/%s/tracks' % search
+        #print (url)
         req = Request(url, headers={'User-Agent' : "Magic Browser"})
         u = urlopen(req)
  
@@ -24,8 +28,8 @@ class Musixmatch(object):
                 ret.append(links[0].get('href'))
         return ret
 
-    def get_data(self, artist):
-        urls = self._search(artist)
+    def get_data(self, artist, title=None):
+        urls = self._search(artist, title)
         print ("Found {} tracks, start collecting each track...".format(len(urls)))
         ret = []
         for url in urls:
@@ -45,6 +49,7 @@ class Musixmatch(object):
 
     def _get_lyrics_from_url(self, url):
         url = 'https://www.musixmatch.com/' + url
+        #print (url)
         req = Request(url, headers={'User-Agent' : "Magic Browser"})
         u = urlopen(req)
         page = lxml.html.parse(u)

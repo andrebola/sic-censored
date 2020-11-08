@@ -8,9 +8,12 @@ import musicbrainzngs
 import pycountry
 import spotipy
 import os
+import json
 import argparse
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import spotipy.util as util
+from musixmatch_scraper import Musixmatch
+from Levenshtein.StringMatcher import StringMatcher
 
 ID = os.environ.get('SPOTIFY_ID')
 SECRET = os.environ.get('SPOTIFY_SECRET')
@@ -63,8 +66,13 @@ def get_artists_from_freemuse(region, country):
                 # TODO: not very robust. find some way to double check
                 try:
                     artist_in_musicbrainz = musicbrainzngs.search_artists(artist=entity, country=pycountry.countries.get(name=country).alpha_2)['artist-list'][0]['name']
-                    artists.add(artist_in_musicbrainz)
-                    print(f'Success! Found artist {entity}')
+                    dist_artist = StringMatcher(seq1=artist_in_musicbrainz.lower(), seq2=entity.lower()).distance()
+                    # A higher value will allow to match different artists, I think between 5 and 10 should be a good range.
+                    if dist_artist < 5 :
+                        artists.add(artist_in_musicbrainz)
+                        print(f'Success! Found artist {entity}')
+                    else:
+                        print(f'Found name {entity} but not in Musicbrainz, closest artists is {artist_in_musicbrainz} with distance {dist_artist}')
                 except: 
                     print(f'Something failed for {entity}')
                     pass
@@ -72,9 +80,12 @@ def get_artists_from_freemuse(region, country):
 
 
 def top_tracks_on_spotify(artist):
-    uri = sp.search(artist)['tracks']['items'][0]['artists'][0]['uri']
-    response = sp.artist_top_tracks(uri)
-    return(response['tracks'])
+    ret = sp.search(artist)
+    if len(ret['tracks']['items']):
+        uri = ret['tracks']['items'][0]['artists'][0]['uri']
+        response = sp.artist_top_tracks(uri)
+        return(response['tracks'])
+    return []
 
 
 def create_spotify_playlist(tids, name='sic-censored'):
@@ -89,15 +100,26 @@ if __name__ == "__main__":
     region = args.region
     country = args.country
     artists = get_artists_from_freemuse(region, country)
+    print (artists)
 
+    source = Musixmatch()
     if len(artists) > 0:
         tids = []
+        lyrics = []
         for artist in artists:
+            ret = source.get_data(artist)#, track['name'])
+            if len(ret):
+                for extra_data,lyric in ret:
+                    #if country in inv_country_code and extra_data['artist']['country'] == inv_country_code[country]:
+                    #lyrics.append({'artist': artist, 'title': track['name'], 'lyrics': ret})
+                    lyrics.append({'artist': artist, 'lyrics': ret})
             tops = top_tracks_on_spotify(artist)
             for track in tops:
                 # Sometimes gives [no artist] ?
                 print(artist, track['name'])
                 tids.append(track['id'])
+
+        json.dump(lyrics, open('lyrics_{}_{}.json'.format(region,country), 'w'))
 
         # create_spotify_playlist(tids,'sic-censored' +'_' + region + '_' + country)
 
