@@ -1,0 +1,24 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{%block title%} Artist's Data & playlist {%endblock%}
+{% block navbar %}
+{{nav.top.render()}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h1>Europe / Spain</h1>
+	<div class="row">
+		<div class="col">
+			<h2>Playlist</h2>
+			<iframe src="https://open.spotify.com/embed/album/1DFixLWuPkv3KT3TnV35m3" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+		</div>
+		<div class="col">
+			<h2>Lyrics wordcloud</h2>
+			<img src="static/word_cloud-253x300.png" class="img-fluid" alt="Responsive image">
+		</div>
+	</div>
+</div>
+	
+{% endblock %}
