@@ -1,282 +1,93 @@
+{% extends "bootstrap/base.html" %}
 
-{% extends 'base.html' %}
+{% block title %}Map{% endblock %}
 
-{% block title %}
- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-   crossorigin=""/>
-<link rel="stylesheet" type="text/css" href="../static/some.css"/>
-<title>OpenLayers Simplest Example</title>
-<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-<meta content="utf-8" http-equiv="encoding">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="../static/jQuery-slimScroll-1.3.8/jquery.slimscroll.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-   crossorigin=""></script>
-<script>
-    //map = new OpenLayers.Map("demoMap");
-    //map.addLayer(new OpenLayers.Layer.OSM());
-    //map.zoomToMaxExtent();
-    
-    (function($) {
-
-  $(document).ready(function(){
-  
-  var mapCenterLat  = '45';
-        mapCenterLong  = '0';
-        zoom = '1.55';
-        southWest = L.latLng(-60, -216),
-        northEast = L.latLng(90, 300),
-        bounds = L.latLngBounds(southWest, northEast);
-
-  var mymap = L.map('mapid',{
-      scrollWheelZoom: false,
-      maxBounds: bounds,
-      attributionControl: false
-    }).setView([mapCenterLat, mapCenterLong], zoom);
-
-  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1,
-    accessToken: 'pk.eyJ1IjoiYW5kcmVib2xhIiwiYSI6ImNraDN4OWZwbTAycG0ycG5zcTZzOWlva3kifQ.xKL-CoSXjk6nMVv4mLfqTA'
-}).addTo(mymap);
-
- var data_file = "../static/data.json";
- //var data_file = "http://localhost:8000/static/data.json";
- $.getJSON(data_file, function(json) {
-    var geojsonFeature = json; // this will show the info it in firebug console
-
-    L.geoJson(geojsonFeature).addTo(mymap);
-
-    L.tileLayer('', {
-        maxZoom: 4,
-        minZoom: 2.2
-    }).addTo(mymap);
-
-    var geojsonMap;
-
-    geojsonMap = L.geoJson(geojsonFeature,{
-      style: rsfStyle,
-      onEachFeature: rsfOnEachFeature,
-    }).addTo(mymap);
-
-    var myLines = [{
-        "type": "MultiLineString",
-        "coordinates": [
-          [[-13.1, 27.667312], [-12.8, 27.667312]],
-          [[-12.6, 27.667312], [-12.3, 27.667312]],
-          [[-12, 27.667312], [-11.7, 27.667312]],
-          [[-11.4, 27.667312], [-11.1, 27.667312]],
-          [[-10.8, 27.667312], [-10.5, 27.667312]],
-          [[-10.2, 27.667312], [-9.9, 27.667312]],
-          [[-9.6, 27.667312], [-9.3, 27.667312]],
-          [[-9, 27.667312], [-8.7, 27.667312]]
-          ]
-    }];
-
-    var myStyle = {
-        "color": "#FFFFFF",
-        "weight": 'O,5',
-        "opacity": 1
-    };
-    var line;
-    line = L.geoJson(myLines, {
-        style: myStyle
-    }).addTo(mymap);
-
-
-    //
-    function rsfStyle(feature) {
-      return {
-        color: '#fff',
-        fillColor: feature.properties.fill,
-        fillOpacity: 1,
-        opacity: 1, // stroke opacity,
-        weight: 1, // stroke size
-      };
-    }
-
-    function rsfOnEachFeature(feature, layer) {
-
-      layer.on({
-          click: zoomToFeature
-      });
-
-    }
-    function zoomToFeature(e) {
-      var country_properties = e.target.feature.properties;
-
-      // zoom on the country
-      mymap.setView(country_properties.country_center, 2.4);
-
-      // open popup
-      openCountryPopup(country_properties);
-    }
-    
-});
-
-
-    // country popup
-    function openCountryPopup(country_properties) {
-      var popupContent = country_properties.popup_content;
-
-      var CountryCenter = L.latLng(country_properties.country_center[0], country_properties.country_center[1]);
-
-      countryPopup = L.popup({
-        className: 'ranking-map__popup'
-        })
-        .setLatLng(CountryCenter)
-        .openOn(mymap)
-        .setContent(popupContent)
-      ;
-
-      // Popup slider
-      var $slideshow = $('.slideshow');
-      var slide_count = $slideshow.children().length;
-      var slide_width_pc = 100.0 / slide_count;
-      var slide_index = 0;
-
-      var first_slide = $slideshow.find(".ranking-map__popup-slide:first-child");
-      var last_slide = $slideshow.find(".ranking-map__popup-slide:last-child");
-      first_slide.clone().appendTo($slideshow);
-      last_slide.clone().prependTo($slideshow);
-
-      $slideshow.find(".ranking-map__popup-slide").each(function(indx, i) {
-        var left_percent = (slide_width_pc * indx) + "%";
-        $(this).css({"left":left_percent});
-        $(this).css({width:(100 / slide_count) + "%"});
-        if ($slideshow.find(".ranking-map__popup-slide").length < 5) {
-          $slideshow.css("width", "200%");
-        }
-      });
-
-      $slideshow.css("margin-left", "-100%");
-
-      // Listen for click of prev button
-      $(".ranking-map__popup-prev").on('click', function() {
-        slide(slide_index - 1);
-      });
-
-      // Listen for click of next button
-      $(".ranking-map__popup-next").on('click', function() {
-        slide(slide_index + 1);
-      });
-
-      $('.ranking-map__popup-slider-text').slimScroll({
-          height: 'auto',
-          color: '#E2E2E2',
-          scrollTo: '0px'
-      });
-
-      // Sliding function
-      function slide(new_slide_index) {
-        var margin_left_pc = (new_slide_index * (-100) - 100) + "%";
-
-        $slideshow.velocity({"margin-left": margin_left_pc}, 400, function() {
-
-          // If new slide is before first slide...
-          if(new_slide_index < 0) {
-            $slideshow.css("margin-left", ((slide_count) * (-100)) + "%");
-            new_slide_index = slide_count - 1;
-          }
-          // If new slide is after last slide...
-          else if(new_slide_index >= slide_count) {
-            $slideshow.css("margin-left", "-100%");
-            new_slide_index = 0;
-          }
-
-          slide_index = new_slide_index
-
-        });
-
-      }
-    }
-/*
-    // On click on country list item
-    // Small screen direct link to country OR larger screen open leaflet popup
-    if (window.matchMedia('(max-width: 992px)').matches) {
-
-      $('.country_name_item').each(function() {
-        var $this = $(this);
-        country_ranking = $this.attr("ranking");
-
-        country_features = geojsonFeatures.features[country_ranking];
-        country_properties = country_features.properties;
-        country_href = $(country_properties.country_link).attr("href");
-        $this.find('.ranking-map__panel-link').attr("href", country_href);
-
-      });
-
-    } else {
-
-        $('.country_name_item').on('click', function() {
-          var $this = $(this);
-          country_ranking = $this.attr("ranking");
-
-          country_features = geojsonFeatures.features[country_ranking];
-          country_properties = country_features.properties;
-
-          // zoom on the country
-          map.setView((country_properties.country_center), 2.4);
-
-          // open popup
-          openCountryPopup(country_properties);
-
-        });
-    }
-
-    // open countries list on click
-    $('.ranking-map__list-btn').on('click', function() {
-      var $this = $(this);
-      $this.toggleClass('close-panel');
-      $this.siblings('.ranking-map__panel').toggleClass('close-panel');
-    });
-
-    // open years filter
-    $('.ranking-panel__year-filter .active').on('click', function() {
-      var $this = $(this);
-      $this.toggleClass('active-dropdown');
-      $this.siblings().toggleClass('active-dropdown');
-    });
-
-    // Add countries filter
-      // custom css expression for a case-insensitive contains()
-      jQuery.expr[':'].Contains = function(label,i,m){
-          return (label.textContent || label.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
-      };
-
-      // create and add the filter form to the header
-      /*
-      var form = $("<form>").attr({"class":"ranking_map__filter","action":"#"}),
-      input = $("<input>").attr({"class":"ranking_map__input","type":"text","placeholder":Drupal.t('Search')});
-
-      $(form).append(input).insertBefore('.ranking-map__countries-list');
-      $('.country_name_item').addClass('filter');
-      $(input).change( function () {
-          var filter = $(this).val();
-      if(filter) {
-          // this finds all links in a list that contain the input,
-          // and hide the ones not containing the input while showing the ones that do
-          $(".ranking-map__panel-name:not(:Contains(" + filter + "))").parents('.country_name_item').removeClass('filter');
-          $(".ranking-map__panel-name:Contains(" + filter + ")").parents('.country_name_item').addClass('filter');
-      } else {
-          $('.country_name_item').addClass('filter');
-      }
-          return false;
-      })
-      .keyup( function () {
-          // fire the above change event after every letter
-          $(this).change();
-      });*/
-
-  });
-}(jQuery));
-</script>
+{% block navbar %}
+{{nav.top.render()}}
 {% endblock %}
+
 {% block content %}
-  <div id="mapid"></div>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+    <style type="text/css">
+        .navbar{
+            margin-bottom: 0 !important;
+        }
+        .leaflet-container{background-color:#c5e8ff;}
+    </style>
+
+    <div id="map" style="width: 100%; height: 100vh;"></div>
+
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script>
+        // https://geojson-maps.ash.ms/
+        var data = JSON.parse('{{ data | tojson | safe}}');;
+        var myCustomStyle = {
+            stroke: true,
+            weight: 1,
+            color: 'gainsboro',
+            fill: true,
+            fillColor: 'white',
+            fillOpacity: 1
+        }
+        var map = L.map('map').setView([40, 0], 1.5);
+        
+        var prevLayerClicked = null;
+
+        var defaultStyle =  {
+            weight: 1,
+            color: 'white',
+            dashArray: '',
+            fillOpacity: 0.9,
+            fillColor: 'white'
+        }
+
+        var selectedStyle =  {
+            weight: 1,
+            color: '#009cb3',
+            dashArray: '',
+            fillOpacity: 0.9,
+            fillColor: '#009cb3'
+        }
+
+        function onEachFeature (feature, layer) {
+            layer.on({
+                click: function(e){
+                    // If you have a layer inside  this variable
+                    if (prevLayerClicked !== null) {
+                        // Reset style
+                        prevLayerClicked.setStyle(defaultStyle);
+                    }
+
+                    // Do your things here
+                    map.fitBounds(e.target.getBounds());
+                    var layer = e.target;
+
+                    layer.setStyle(selectedStyle);
+
+                    // Store clicked layer into this variable
+                    prevLayerClicked = layer;
+                }
+            });
+
+            layer.bindPopup( 
+                "<p class='info_paragraph'><b> Country: </b> " +
+                feature.properties.name + "</p>" +
+                "<form action=" + feature.properties.name.toLowerCase().split(' ').join('_') + ">" + 
+                    "<input type='submit' value='Go to stats'/>" + 
+                "</form>"
+            );
+        };
+
+        L.geoJson(data, {
+            clickable: true,
+            style: myCustomStyle,
+            onEachFeature: onEachFeature,
+        }).addTo(map);
+        
+    </script>
+{% endblock %}
+
+{% block footer %}
 {% endblock %}
