@@ -40,7 +40,7 @@ def map():
 @app.route('/data/', defaults={'country': 'spain'})
 @app.route("/data/<country>")
 def data(country):
-    data = json.load(open('data/{country}.json'))
+    data = json.load(open(f'data/{country}.json'))
     return(render_template("data.html"), data)
 
 @app.route('/<page_name>')
