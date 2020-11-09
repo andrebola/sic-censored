@@ -1,0 +1,17 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{%block title%} Artist's Data & playlist {%endblock%}
+{% block navbar %}
+{{nav.top.render()}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h1>Playlist</h1>
+	<iframe src="https://open.spotify.com/embed/album/1DFixLWuPkv3KT3TnV35m3" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+</div>
+	
+
+
+{% endblock %}
