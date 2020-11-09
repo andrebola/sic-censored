@@ -41,7 +41,7 @@ def map():
 @app.route("/data/<country>")
 def data(country):
     data = json.load(open(f'data/{country}.json'))
-    return(render_template("data.html"), **data)
+    return(render_template("data.html", **data))
 
 @app.route('/<page_name>')
 def other_page(page_name):
