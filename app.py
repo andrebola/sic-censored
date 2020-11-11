@@ -4,6 +4,7 @@ from whitenoise import WhiteNoise
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import *
+import glob
 
 nav = Nav()
 # registers the "top" menubar
@@ -44,7 +45,15 @@ def data_main():
 @app.route("/data/<country>")
 def data(country):
     data = json.load(open('data/{}.json'.format(escape(country.replace(".", "")))))
-    return(render_template("data.html", **data))
+    lyrics_artists = json.load(open(str(glob.glob(f'scrapers/songlyrics/*{country}.json')[0])))
+    lyrics = ''
+    for artist in lyrics_artists:
+        try: 
+            lyrics += artist['lyrics'][0]
+        except: 
+            pass
+    lyrics = lyrics.lower().replace('\n', ' ').replace('\r', '')
+    return(render_template("data.html", data = data, lyrics = lyrics))
 
 @app.route('/<page_name>')
 def other_page(page_name):
