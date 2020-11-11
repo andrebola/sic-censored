@@ -12,7 +12,7 @@ nav.register_element(
     Navbar(
         View('Forbidden Territories', 'index'),
         View('Map', 'map'),
-        View('Data', 'data'),
+        View('Data', 'data_main'),
         View('About', 'about'),
         Link('github', 'https://github.com/andrebola/sic-censored'), 
     )
@@ -43,7 +43,7 @@ def data_main():
 
 @app.route("/data/<country>")
 def data(country):
-    data = json.load(open('data/{}.json'.format(escape(country))))
+    data = json.load(open('data/{}.json'.format(escape(country.replace(".", "")))))
     return(render_template("data.html", **data))
 
 @app.route('/<page_name>')
