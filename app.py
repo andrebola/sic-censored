@@ -38,7 +38,7 @@ def map():
     data = json.load(open(f'map/custom_light.geo.json'))
     return(render_template("map.html", data = data))
 
-@app.route('/data/'})
+@app.route('/data/')
 @app.route("/data/<country>")
 def data(country="spain"):
     data = json.load(open(f'data/{country}.json'))
