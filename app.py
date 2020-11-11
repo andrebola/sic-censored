@@ -1,6 +1,5 @@
 import json
-from flask import Flask
-from flask import render_template, make_response
+from flask import Flask, escape, request, render_template, make_response
 from whitenoise import WhiteNoise
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
@@ -39,9 +38,12 @@ def map():
     return(render_template("map.html", data = data))
 
 @app.route('/data/')
+def data_main():
+    return data("spain")
+
 @app.route("/data/<country>")
-def data(country="spain"):
-    data = json.load(open(f'data/{country}.json'))
+def data(country):
+    data = json.load(open(f'data/{}.json').format(escape(country)))
     return(render_template("data.html", **data))
 
 @app.route('/<page_name>')
