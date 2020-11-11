@@ -43,7 +43,7 @@ def data_main():
 
 @app.route("/data/<country>")
 def data(country):
-    data = json.load(open('data/{}.json').format(escape(country)))
+    data = json.load(open('data/{}.json'.format(escape(country))))
     return(render_template("data.html", **data))
 
 @app.route('/<page_name>')
