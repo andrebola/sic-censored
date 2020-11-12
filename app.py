@@ -5,6 +5,7 @@ from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import *
 import glob
+import unicodedata
 
 nav = Nav()
 # registers the "top" menubar
@@ -42,17 +43,28 @@ def map():
 def data_main():
     return data("spain")
 
+def clean_words(words, clean=True):
+    if clean:
+        for word in words.split():
+            for i, c in enumerate(word):
+                if not unicodedata.name(c).startswith("LATIN"):
+                    word  = word[:i].lower()
+                else: 
+                    word = word.lower()
+        return "".join(words).replace('\n', ' ').replace('\r', '')
+    else: return words.replace('\n', ' ').replace('\r', '')
+
 @app.route("/data/<country>")
 def data(country):
     data = json.load(open('data/{}.json'.format(escape(country.replace(".", "")))))
     lyrics_artists = json.load(open(str(glob.glob(f'scrapers/songlyrics/*{country}.json')[0])))
     lyrics = ''
     for artist in lyrics_artists:
-        try: 
-            lyrics += artist['lyrics'][0]
-        except: 
-            pass
-    lyrics = lyrics.lower().replace('\n', ' ').replace('\r', '')
+        try: lyrics += artist['lyrics'][0]
+        except: pass
+    lyrics = clean_words(lyrics, clean=False)
+
+    print(lyrics)
     return(render_template("data.html", data = data, lyrics = lyrics))
 
 @app.route('/<page_name>')
