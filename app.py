@@ -60,11 +60,12 @@ def data(country):
     lyrics_artists = json.load(open(str(glob.glob(f'scrapers/songlyrics/*{country}.json')[0])))
     lyrics = ''
     for artist in lyrics_artists:
-        try: lyrics += artist['lyrics'][0]
-        except: pass
+        if len(artist['lyrics']):
+            for l in artist['lyrics']:
+                lyrics += " "+l
+            #lyrics += " "+artist['lyrics'][0]
     lyrics = clean_words(lyrics, clean=False)
 
-    print(lyrics)
     return(render_template("data.html", data = data, lyrics = lyrics))
 
 @app.route('/<page_name>')
