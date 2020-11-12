@@ -4,11 +4,20 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import spotipy.util as util
 import os
-from IPython import embed
+import argparse
 
 ID = os.environ.get('SPOTIFY_ID')
 SECRET = os.environ.get('SPOTIFY_SECRET')
 REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI')
+
+
+def get_args():
+    parser = argparse.ArgumentParser(description='create playlist')
+    parser.add_argument('-p', '--playlist_name', required=True, default='test',
+                        help='playlist name')
+    parser.add_argument('-a', '--artist', required=True, default='rosalia',
+                        help='artist name')
+    return parser.parse_args()
 
 
 class SpotifyPlaylistGenerator(object):
@@ -39,9 +48,8 @@ class SpotifyPlaylistGenerator(object):
 
 
 if __name__ == "__main__":
-    pl = SpotifyPlaylistGenerator(playlist_name='sic-censored')
-    res = pl.top_tracks("rosalia")
-    pl.create_playlist('test')
+    args = get_args()
+    pl = SpotifyPlaylistGenerator()
+    res = pl.top_tracks(args.artist)
+    pl.create_playlist(args.playlist_name)
     pl.add_to_playlist([x['id'] for x in res])
-    print(res)
-    embed()
