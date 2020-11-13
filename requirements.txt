@@ -48,3 +48,4 @@ whitenoise==5.2.0
 gunicorn
 python-decouple
 lxml
+ftfy
