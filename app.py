@@ -1,11 +1,14 @@
 import json
-from flask import Flask, escape, request, render_template, make_response
+from flask import Flask, escape, request, render_template, make_response, jsonify, make_response
 from whitenoise import WhiteNoise
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import *
 import glob
+import ftfy
+import re
 import unicodedata
+from collections import defaultdict
 
 nav = Nav()
 # registers the "top" menubar
@@ -24,6 +27,7 @@ app = Flask(__name__)
 Bootstrap(app)
 nav.init_app(app)
 app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 
 @app.route("/")
@@ -54,19 +58,38 @@ def clean_words(words, clean=True):
         return "".join(words).replace('\n', ' ').replace('\r', '')
     else: return words.replace('\n', ' ').replace('\r', '')
 
-@app.route("/data/<country>")
-def data(country):
+    
+@app.route("/ajax/data/<country>")
+def dict_lyrics(country):   
     data = json.load(open('data/{}.json'.format(escape(country.replace(".", "")))))
-    lyrics_artists = json.load(open(str(glob.glob(f'scrapers/songlyrics/*{country}.json')[0])))
-    lyrics = ''
+    lyrics_artists = json.load(open(str(glob.glob(f'scrapers/songlyrics/*{country}*.json')[0]), encoding='utf-8'))
+    
+    stop_words = set(json.load(open("data/en_stopwords.json")))
+    if country in ['spain', 'argentina', 'dominican-rep','chile','peru']:
+        stop_words.update(set(json.load(open("data/es_stopwords.json"))))
+    elif country in ['france']:
+        stop_words.update(set(json.load(open("data/fr_stopwords.json"))))
+    elif country in ['brazil', 'portugal']:
+        stop_words.update(set(json.load(open("data/pt_stopwords.json"))))
+    elif country in ['italy']:
+        stop_words.update(set(json.load(open("data/it_stopwords.json"))))
+    
+    print (country)
+    lyrics = defaultdict(int)
     for artist in lyrics_artists:
         if len(artist['lyrics']):
             for l in artist['lyrics']:
-                lyrics += " "+l
-            #lyrics += " "+artist['lyrics'][0]
-    lyrics = clean_words(lyrics, clean=False)
+                for w in l.split():
+                    clean_w = re.sub('\W+','', ftfy.ftfy(w) ).replace('\n', '').replace('\r', '')
+                    if clean_w.lower() not in stop_words and not clean_w.isnumeric() and clean_w!='':
+                        lyrics[clean_w.lower()] += 1
+    return make_response(jsonify(lyrics))
 
-    return(render_template("data.html", data = data, lyrics = lyrics))
+@app.route("/data/<country>")
+def data(country):
+    data = json.load(open('data/{}.json'.format(escape(country.replace(".", "")))))
+
+    return(render_template("data.html", country=country, data = data))
 
 @app.route('/<page_name>')
 def other_page(page_name):

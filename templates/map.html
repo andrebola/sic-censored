@@ -75,7 +75,7 @@
             layer.bindPopup( 
                 "<p class='info_paragraph'><b> Country: </b> " +
                 feature.properties.name + "</p>" +
-                '<form action="data/' + feature.properties.name.toLowerCase().split(' ').join('_') + '">' + 
+                '<form action="data/' + feature.properties.name.replace(".", '').toLowerCase().split(' ').join('-') + '">' + 
                     "<input type='submit' value='Go to stats'/>" + 
                 "</form>"
             );
