@@ -20,7 +20,7 @@
 </div>
 
 <script>
-
+var NUM_CHARS = 50
 var total = [];
 function queryText(text){
     var api_location = "http://fonil.mtg.upf.edu/predict";
@@ -42,10 +42,10 @@ function updateDisplay(text){
     }
     var result = [];
     for( var i = 0; i < total.length; i++ ){
-	if (i > 0 && total[i] < total[i-1]+200){
+	if (i > 0 && total[i] < total[i-1]+NUM_CHARS){
 	    prev = total[i];
 	}else if(i > 0){
-	    result.push([first,prev+200]);
+	    result.push([first,prev+NUM_CHARS]);
 	    first=total[i];
 	    prev = total[i];
 	}
@@ -53,7 +53,7 @@ function updateDisplay(text){
         //sum += parseInt( total[i], 10 ); //don't forget to add the base
     }
     if (total.length > 0){
-        result.push([first,prev+200]);
+        result.push([first,prev+NUM_CHARS]);
     }
     //var avg = sum/total.length;
     //console.log(result)
@@ -81,7 +81,7 @@ $( "#submit" ).click(function() {
     {
 	console.log(i);
 	const printName = function(j){
-	queryText(text.substr(i, i+200)).done(function(toxicCount){
+	queryText(text.substr(i, i+NUM_CHARS)).done(function(toxicCount){
 	
 	    //console.log(toxicCount);
 	    if (toxicCount > 95){
