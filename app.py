@@ -23,6 +23,7 @@ nav.register_element(
         View('Data', 'data_main'),
         View('Query', 'lyric_query'),
         View('About', 'about'),
+        View('Manifesto', 'manifesto'),
         Link('github', 'https://github.com/andrebola/sic-censored'), 
     )
 )
@@ -37,6 +38,11 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 @app.route("/")
 def index():
 	return render_template("index.html")
+
+@app.route("/manifesto")
+def manifesto():
+	return render_template("manifesto.html")
+
 
 @app.route("/about")
 def about():
