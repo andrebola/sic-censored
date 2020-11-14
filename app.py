@@ -9,6 +9,8 @@ import ftfy
 import re
 import unicodedata
 from collections import defaultdict
+from collections import Counter
+from random import choice, choices
 
 nav = Nav()
 # registers the "top" menubar
@@ -85,10 +87,42 @@ def dict_lyrics(country):
                         lyrics[clean_w.lower()] += 1
     return make_response(jsonify(lyrics))
 
+def blocks(text, n):
+    p = text + text[:n - 1]
+    p = dict(Counter([p[i:i + n] for i in range(len(text))]))
+    p = [[p[x], x] for x in p]
+    p.sort()
+    return p
+
+def generate(text, maxlen, n):
+    if n == 1:
+        t = ''
+        for i in range(maxlen): t += text[choice(range(len(text)))]
+        return t
+    p = blocks(text, n)
+    t = choices([x[1] for x in p], [x[0] for x in p])[0]
+    while len(t) < maxlen:
+        f = t[-n + 1:]
+        pp = [x for x in p if x[1][:n - 1] == f] 
+        t = t + choices([x[1] for x in pp], [x[0] for x in pp])[0][-1]
+    return t
+
+@app.route("/ajax/data/<country>/create")
+def create_lyrics(country):
+    lyrics_artists = json.load(open(str(glob.glob(f'scrapers/songlyrics/*{country}*.json')[0]), encoding='utf-8'))
+    lyrics = ''
+    for artist in lyrics_artists:
+        if len(artist['lyrics']):
+            for l in artist['lyrics']:
+                try: lyrics += l
+                except: pass
+    # lyrics = clean_words(lyrics, clean=False)
+    return make_response(generate(lyrics, maxlen = 500, n = 6))
+
 @app.route("/data/<country>")
 def data(country):
     data = json.load(open('data/{}.json'.format(escape(country.replace(".", "")))))
-
+    
     return(render_template("data.html", country=country, data = data))
 
 @app.route('/<page_name>')
@@ -98,4 +132,4 @@ def other_page(page_name):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
