@@ -20,6 +20,7 @@ nav.register_element(
         View('Forbidden Territories', 'index'),
         View('Map', 'map'),
         View('Data', 'data_main'),
+        View('Query', 'lyric_query'),
         View('About', 'about'),
         Link('github', 'https://github.com/andrebola/sic-censored'), 
     )
@@ -39,6 +40,11 @@ def index():
 @app.route("/about")
 def about():
 	return render_template("about.html")
+
+@app.route("/query")
+def lyric_query():
+	return render_template("query.html")
+
 
 @app.route("/map")
 def map():

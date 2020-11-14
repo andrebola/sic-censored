@@ -1,0 +1,63 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Query Lyric{% endblock %}
+
+{% block navbar %}
+{{nav.top.render()}}
+{% endblock %}
+
+{% block content %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<div class="container">
+  <h1>Insert Lyric</h1>
+  <div>
+  <textarea id="query" rows="30" cols="70"></textarea>
+  <button id="submit">Submit</button>
+  </div>
+  <div id="result">
+	  
+  </div>
+</div>
+
+<script>
+
+var total = [];
+function queryText(text){
+    var api_location = "http://fonil.mtg.upf.edu/predict";
+    $('#result').text("Loading ... ");
+    return $.ajax({
+    url: api_location,
+    data: {input: text},
+    contentType:"applicaton/json",
+    });
+	/*.done(function(toxic_count) {
+        return (toxic_count)
+    });*/
+}
+function updateDisplay(){
+	console.log(total)
+    var sum = 0;
+    for( var i = 0; i < total.length; i++ ){
+        sum += parseInt( total[i], 10 ); //don't forget to add the base
+    }
+ 
+    var avg = sum/total.length;
+    console.log(avg)
+    $('#result').text("Result: "+avg);
+}
+$( "#submit" ).click(function() {
+    total = [];
+    var text = $('#query').val();
+    text.split('.')[0];
+    for(var i = 0 ; i < text.length; i +=200)
+    {
+	queryText(text.substr(i, i+200)).done(function(toxicCount){
+	    total.push(toxicCount);
+	    console.log(toxicCount);
+	    updateDisplay();
+	});
+    }
+    
+
+    });
+</script>
+{% endblock %}
