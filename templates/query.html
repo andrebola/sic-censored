@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <div class="container">
   <h1>Insert Lyric</h1>
@@ -23,38 +24,72 @@
 var total = [];
 function queryText(text){
     var api_location = "http://fonil.mtg.upf.edu/predict";
-    $('#result').text("Loading ... ");
     return $.ajax({
     url: api_location,
     data: {input: text},
     contentType:"applicaton/json",
     });
-	/*.done(function(toxic_count) {
-        return (toxic_count)
-    });*/
 }
-function updateDisplay(){
+function updateDisplay(text){
 	console.log(total)
-    var sum = 0;
-    for( var i = 0; i < total.length; i++ ){
-        sum += parseInt( total[i], 10 ); //don't forget to add the base
+	console.log("BEGINE");
+    total.sort();
+    var prev = 0
+    var first = 0
+    if (total.length > 0){
+	    prev = total[0];
+	    first = total[0];
     }
- 
-    var avg = sum/total.length;
-    console.log(avg)
-    $('#result').text("Result: "+avg);
+    var result = [];
+    for( var i = 0; i < total.length; i++ ){
+	if (i > 0 && total[i] < total[i-1]+200){
+	    prev = total[i];
+	}else if(i > 0){
+	    result.push([first,prev+200]);
+	    first=total[i];
+	    prev = total[i];
+	}
+
+        //sum += parseInt( total[i], 10 ); //don't forget to add the base
+    }
+    if (total.length > 0){
+        result.push([first,prev+200]);
+    }
+    //var avg = sum/total.length;
+    //console.log(result)
+    resultsText = "";
+    prev = 0 ;
+    for( var i = 0; i < result.length; i++ ){
+	//if (i>0){
+	    resultsText += text.substr(prev,result[i][0]);
+	//}
+	resultsText += '<div style="text-decoration: underline;text-decoration-color: red;">' + text.substr(result[i][0], result[i][1])+ '</div>';
+	prev = result[i][1];
+    }
+    resultsText += text.substr(prev,text.length);
+    //console.log(resultsText);
+    //$('#result').text("Result: "+avg);
+    $('#result').html(resultsText);
 }
 $( "#submit" ).click(function() {
+    $('#result').text("Loading ... ");
     total = [];
     var text = $('#query').val();
+    console.log(text.length);
     text.split('.')[0];
-    for(var i = 0 ; i < text.length; i +=200)
+    for(var i = 0 ; i < text.length; i +=20)
     {
+	console.log(i);
+	const printName = function(j){
 	queryText(text.substr(i, i+200)).done(function(toxicCount){
-	    total.push(toxicCount);
-	    console.log(toxicCount);
-	    updateDisplay();
-	});
+	
+	    //console.log(toxicCount);
+	    if (toxicCount > 95){
+	        total.push(j);
+	    }
+	    updateDisplay(text);
+	})};
+	printName(i);
     }
     
 
