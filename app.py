@@ -124,7 +124,7 @@ def create_lyrics(country):
         if len(artist['lyrics']):
             for l in artist['lyrics']:
                 for w in l.split():
-                    clean_w = re.sub('\W+','', ftfy.ftfy(w) ).replace('\n', ' \n').replace('\r', '')
+                    clean_w = re.sub('\W+','', ftfy.ftfy(w) ).replace('\n', ' \n').replace('\r', '\r')
                     lyrics.append(clean_w)
     return make_response(generate(" ".join(lyrics), maxlen = 500, n = 6))
 

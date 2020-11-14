@@ -30,8 +30,9 @@
 </div>
 
 <script>
-var NUM_CHARS = 50
+var NUM_CHARS = 20
 var total = [];
+
 function queryText(text){
     var api_location = "http://fonil.mtg.upf.edu/predict";
     return $.ajax({
@@ -47,62 +48,62 @@ function uniq(a) {
     });
 }
 
-function updateDisplay(text){
-	console.log(total)
-	console.log("BEGINE");
-    var newTotal = uniq(total);
-    var prev = 0
-    var first = 0
-    if (newTotal.length > 0){
-	    prev = newTotal[0];
-	    first = newTotal[0];
+function updateDisplay(text, toxic){
+    var finalString = ''
+    for (let i = 0; i < text.length; i += NUM_CHARS) {
+        var oriStr = $('#result').text();
+        var oriStr_prev;
+        var oriStr_i;
+        var oriStr_next;
+        if (i + NUM_CHARS >= text.length) {
+            oriStr_prev = oriStr.slice(-i);
+            oriStr_i = oriStr.slice(i);
+            oriStr_next = '';
+        }
+        else {
+            if (i == 0) {
+                oriStr_prev = '';
+            } else {
+                oriStr_prev = oriStr.slice(0, i);
+            }
+            oriStr_i = oriStr.slice(i, i + NUM_CHARS);
+            oriStr_next = oriStr.slice(i + NUM_CHARS);
+        }
+        
+        if (i in toxic || toxic[i] >= 60) {
+            if (i - Math.floor(NUM_CHARS / 2) in toxic) {
+                toxic[i] = (toxic[i] + toxic[i - Math.floor(NUM_CHARS / 2)]) / 2;
+            }
+            if (toxic[i] >= 60) {
+                var hue = 100 - parseFloat(toxic[i]);
+                finalString += "<span style='background-color: hsl(" + hue + ", 100%, 90%);'>" + oriStr_i + "</span>"
+            } else {
+                finalString += oriStr_i;
+            }
+        } else {
+            if (i - Math.floor(NUM_CHARS / 2) in toxic) {
+                toxic[i] = (toxic[i] + toxic[i - Math.floor(NUM_CHARS / 2)]) / 2;
+            }
+            finalString += oriStr_i;
+        }
     }
-    var result = [];
-    for( var i = 0; i < newTotal.length; i++ ){
-	if (i > 0 && newTotal[i] < newTotal[i-1]+NUM_CHARS){
-	    prev = newTotal[i];
-	}else if(i > 0){
-	    result.push([first,prev+NUM_CHARS]);
-	    first=newTotal[i];
-	    prev = newTotal[i];
-	}
-    }
-    //if (newTotal.length > 0){
-    //    result.push([first,prev+NUM_CHARS]);
-    //}
-    resultsText = "";
-    prev = 0 ;
-    for( var i = 0; i < result.length; i++ ){
-	//if (i>0){
-	    resultsText += text.substr(prev,result[i][0]);
-	//}
-	resultsText += '<div style="text-decoration: underline;text-decoration-color: red;">' + text.substr(result[i][0], result[i][1])+ '</div>';
-	prev = result[i][1];
-    }
-    resultsText += text.substr(prev,text.length);
-    //console.log(resultsText);
-    //$('#result').text("Result: "+avg);
-    $('#result').html(resultsText);
+    $('#result').html("<p>"+ finalString +"</p>")
 }
-$( "#submit" ).click(function() {
+
+$("#submit").click(function() {
     $('#result').text("Loading ... ");
-    total = [];
+    total = {};
     var text = $('#query').val();
+    $('#result').text(text);
     console.log(text.length);
     text.split('.')[0];
-    for(var i = 0 ; i < text.length; i +=Math.floor(NUM_CHARS/2))
-    {
-	console.log(i);
-	const printName = function(j){
-	queryText(text.substr(i, i+NUM_CHARS)).done(function(toxicCount){
-	
-	    //console.log(toxicCount);
-	    if (toxicCount > 95){
-	        total.push(j);
-	    }
-	    updateDisplay(text);
-	})};
-	printName(i);
+    for(var i = 0 ; i < text.length; i += Math.floor(NUM_CHARS / 2)) {
+        const printName = function(i) {
+            queryText(text.substr(i, i + NUM_CHARS)).done(function(toxicCount){
+            total[i] = parseFloat(toxicCount);
+            updateDisplay(text, total);
+        })};
+        printName(i);
     }
     
 
