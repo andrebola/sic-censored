@@ -5,6 +5,23 @@
 {{nav.top.render()}}
 {% endblock %}
 
+{% block styles %}
+{{super()}}
+<style>
+  .container > p{
+    margin: 0 60px 20px 30px;
+    font-size: 18px;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+  html > *, body > * {
+    font-family: 'Montserrat', sans-serif;
+  }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <div class="container">
   <h1>Team A</h1>
