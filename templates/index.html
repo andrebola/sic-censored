@@ -1,6 +1,10 @@
 {% extends "bootstrap/base.html" %}
 {% block title %}Forbidden territories{% endblock %}
 
+{%- block metas %}
+  <meta charset="utf-8"/>
+{%- endblock metas %}
+
 {% block navbar %}
 {{nav.top.render()}}
 {% endblock %}
@@ -8,16 +12,23 @@
 {% block styles %}
 {{super()}}
 <style>
-.container > p{
+  .container > p{
     margin: 0 60px 20px 30px;
     font-size: 18px;
     text-align: justify;
     text-justify: inter-word;
-}
+  }
+
+  html > *, body > * {
+    font-family: 'Montserrat', sans-serif;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
+<meta charset="utf-8"/>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet"> 
 <div class="container">
   <h1>Music Artis Censorship and Discrimination</h1>
   This project ....

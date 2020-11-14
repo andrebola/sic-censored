@@ -2,23 +2,74 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {%block title%} Artist's Data & playlist {%endblock%}
+
+{%- block metas %}
+  <meta charset="utf-8"/>
+{%- endblock metas %}
+
 {% block navbar %}
 {{nav.top.render()}}
 {% endblock %}
 
 {% block content %}
-<meta charset="utf-8"/>
-<!-- Load d3.js -->
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet"> 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="../static/d3.layout.cloud.js"></script>
 
 <style>
+  :root {
+    --pulse: #009cb3;
+    --pulse-light: #5bad8b; 
+    --pulse-dark: #3f869b;
+  }
+
 	#wordcloud {
     font-size: 60px;
     text-align: center;
     line-height: 370px;
 	}
+
+  .lyrics-wrapper {
+    width: 1000px;
+    height: 380px;
+    background-color: white;
+    box-shadow: 0 0 40px rgba(5,5,38,0.2);
+    white-space: pre-line;
+    padding: 15px;
+    font-size: small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Mali', cursive;
+  }
+
+  .container {
+    margin-bottom: 50px;
+  }
+
+  .input-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+  }
+
+  .btn-primary{
+    background-color: var(--pulse);
+    border-color: var(--pulse);
+    transition: all 0.1s ease-in;
+  }
+
+  .btn-primary:hover, .btn-primary:active {
+    transform: scale(1.1);
+  }
+
+  html > *, body > * {
+    font-family: 'Montserrat', sans-serif;
+  }
 </style>
 
 <div class="container">
@@ -26,10 +77,42 @@
 	<h1>{{data.name}}</h1>
 	<div class="row">
 		<div class="col">
-			<h2>Playlist</h2>
+      <h2>Playlist + Word Cloud</h2>
+      <p>
+        Below you can find {{ data.name | select_country }}'s censored playlist and the word cloud of 
+        the most common words found in the lyrics by those censored artists. 
+      </p>
 			<div class="row" style="display: flex !important;">
 				<iframe src="{{data.playlist}}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 				<div id="wordcloud" style="width: 100%; height: 380px;"></div>
+			</div>
+    </div>
+  </div>
+  
+  <div class="row">
+		<div class="col">
+      <h2>Lyrics generator</h2>
+			<div class="row" style="display: flex !important;">
+        <div style="height: 380px; padding-right: 50px;">
+          <p>
+            Looking at the most common words is not the same as looking at the most common
+            syntax structures in the lyrics.
+          </p> 
+          <h4>Do you want to generate a sample lyric based 
+            on the censored lyrics from {{ data.name | select_country }}?
+          </h4>
+          <p>
+            <b>You can do that with our lyrics generator!</b> Beware that those lyrics DO NOT
+            exist and may contain obscene content. The lyrics are generated randomly
+            using a statistical model. 
+          </p>
+          <div class="input-wrapper">
+            <input type="submit" class="btn btn-primary" value="Generate">
+          </div>
+        </div>
+        <div id="lyrics-wrapper" class="lyrics-wrapper">
+          <p id="lyrics-wrapper-text" style="font-size: xx-large; text-align: center;">CHECK <br> IT OUT  </p>
+        </div>
 			</div>
     </div>
 	</div>
@@ -91,89 +174,19 @@
       $(svg_location).html("");
     });
 
-    /*
-    function getRand(min, max) {
-        return Math.random() * (max - min) + min;
-    }
-
-    function Counter(array) {
-      var count = {};
-      array.forEach(val => count[val] = (count[val] || 0) + 1);
-      return count;
-    }
-
-    function blocks(txt, gram) {
-        var p = txt + txt.slice(-(gram - 1));
-        var arr = [];
-        for (i = 0; i < txt.length; ++i) {
-          arr.push(p.slice(i, i + gram));
-        }
-        p = Counter(arr);
-        var pd = [];
-        Object.keys(p).forEach(x => {
-          pd.push(Array(p[x], x))
-        });
-        pd.sort()
-        return pd
-    }
-
-    function choices(elems, weights) {
-      var totalWeight = 0;
-      for (var w in weights) {
-          totalWeight += w;
-      }
-      var random = Math.floor(Math.random() * totalWeight);
-      for (var i = 0; i < elems.length; i++) {
-        random -= weights[i];
-        if (random < 0) {
-            return elems[i];
-        }
-      }
-    }
-
-    function create(txt, N, gram) {
-      if (gram == 1) {
-        var t = '';
-        for (i = 0; i < N; ++i) {
-          t += txt[getRand(0, txt.length)];
-          return t;
-        }
-      }
-      var p = blocks(txt, gram);
-      var elems = [];
-      var weights = [];
-      p.forEach(x => {
-        elems.push(x[1])
-        weights.push(x[0])
+    $(document).on('click', 'input', function(e) {
+      $("#lyrics-wrapper-text").text('Wait a moment...');
+      e.preventDefault();
+      $.ajax({
+        url: "/ajax/data/{{country}}/create",
+        context: document.body,
+        contentType:"text/plain",
+      }).done(function(lyrics) {
+        var lyrics = $("<div/>").html(lyrics).text();
+        console.log(lyrics);
+        $("#lyrics-wrapper").html(lyrics);
+        $("#lyrics-wrapper").css('height', 'max-content');
       });
-      // so far so good
-      var t = choices(elems, weights);
-      while (t.length < N) {
-        var f = t.slice(-(n + 1));
-        var pp = [];
-        p.forEach(x => {
-          if (x[1].slice(-(n - 1)) == f) {
-            pp.push(x);
-          }
-        });
-        var elems_pp = [];
-        var weights_pp = [];
-        pp.forEach(x => {
-          elems_pp.push(x[1])
-          weights_pp.push(x[0])
-        });
-        t = t + choices(elems_pp, weights_pp).pop();
-      }
-      return t;
-    }
-    */
-
-    $.ajax({
-      url: "/ajax/data/{{country}}/create",
-      context: document.body,
-      contentType:"text/plain",
-    }).done(function(lyrics) {
-      console.log(lyrics);
     });
 </script>
 
