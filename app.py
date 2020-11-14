@@ -119,14 +119,14 @@ def generate(text, maxlen, n):
 @app.route("/ajax/data/<country>/create")
 def create_lyrics(country):
     lyrics_artists = json.load(open(str(glob.glob(f'scrapers/songlyrics/*{country}*.json')[0]), encoding='utf-8'))
-    lyrics = ''
+    lyrics = []
     for artist in lyrics_artists:
         if len(artist['lyrics']):
             for l in artist['lyrics']:
-                try: lyrics += l
-                except: pass
-    lyrics = clean_words(lyrics, clean=True)
-    return make_response(generate(lyrics, maxlen = 500, n = 6))
+                for w in l.split():
+                    clean_w = re.sub('\W+','', ftfy.ftfy(w) ).replace('\n', ' \n').replace('\r', '')
+                    lyrics.append(clean_w)
+    return make_response(generate(" ".join(lyrics), maxlen = 500, n = 6))
 
 @app.route("/data/<country>")
 def data(country):
