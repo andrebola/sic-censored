@@ -13,20 +13,92 @@
 <link href="https://fonts.googleapis.com/css2?family=Mali&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet"> 
 
 <style>
+    :root {
+        --pulse: #009cb3;
+        --pulse-light: #5bad8b; 
+        --pulse-dark: #3f869b;
+        --pad: 20px;
+    }
+
     html > *, body > * {
         font-family: 'Montserrat', sans-serif;
     }
+
+    .lyrics-wrapper {
+    width: 50%;
+    height: 380px;
+    background-color: white;
+    box-shadow: 0 0 40px rgba(5,5,38,0.2);
+    white-space: pre-line;
+    padding: 15px;
+    font-size: small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Mali', cursive;
+  }
+
+  .container {
+    margin-bottom: 50px;
+  }
+
+  .input-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+  }
+
+  .btn-primary{
+    background-color: var(--pulse);
+    border-color: var(--pulse);
+    transition: all 0.1s ease-in;
+  }
+
+  .btn-primary:hover, .btn-primary:active {
+    transform: scale(1.1);
+  }
+
+  textarea {
+      width: 100%;
+      height: 100%;
+      resize: none;
+    background-color: transparent;
+
+    border-style: none;
+    border-width: 0;
+  }
 </style>
 
 <div class="container">
-  <h1>Insert Lyric</h1>
-  <div>
-  <textarea id="query" rows="10" cols="70"></textarea>
-  <button id="submit">Submit</button>
-  </div>
-  <div id="result" style="white-space: pre-wrap;">
-	  
-  </div>
+    <h1>Check your lyrics</h1>
+    <div class="row">
+    <p style="margin-bottom: 25px;margin-top: 5px;width: 100%;">
+        We have trained a model that spots content which is likely to be censored in 
+        lyrics data. Just paste your lyrics below and press 'check'. The words and phrases 
+        which may require a review will be highlighted according to the probability of
+        being censored.
+    </p> 
+</div>
+    <div class="row">
+        <div class="col">
+            <div class="row" style="display: flex !important; justify-content: center;">
+                <div class="lyrics-wrapper">
+                    <textarea id="query" placeholder="Paste your lyrics here."></textarea>
+                </div>
+                <div style="width: 20px; height: 100%;"></div>
+                <div id="lyrics-wrapper" class="lyrics-wrapper">
+                    <div id="result"></id>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="display: flex !important; flex-direction: column;">
+        <div class="input-wrapper">
+            <input id="submit" type="submit" class="btn btn-primary" value="Check">
+        </div>
+    </div>
 </div>
 
 <script>
@@ -92,6 +164,7 @@ function updateDisplay(text, toxic){
 
 $("#submit").click(function() {
     $('#result').text("Loading ... ");
+    $('#lyrics-wrapper').css('height', 'max-content');
     total = {};
     var text = $('#query').val();
     $('#result').text(text);
