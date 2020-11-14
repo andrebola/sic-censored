@@ -11,6 +11,7 @@ import unicodedata
 from collections import defaultdict
 from collections import Counter
 from random import choice, choices
+import re
 
 nav = Nav()
 # registers the "top" menubar
@@ -57,13 +58,15 @@ def data_main():
 
 def clean_words(words, clean=True):
     if clean:
+        cwords = []
         for word in words.split():
-            for i, c in enumerate(word):
-                if not unicodedata.name(c).startswith("LATIN"):
-                    word  = word[:i].lower()
-                else: 
-                    word = word.lower()
-        return "".join(words).replace('\n', ' ').replace('\r', '')
+            cword = ''
+            for c in word:
+                try:
+                    cword += re.sub('\W+','', ftfy.ftfy(c) )
+                except: pass
+            cwords.append(cword)
+        return " ".join(cwords)
     else: return words.replace('\n', ' ').replace('\r', '')
 
     
@@ -122,7 +125,7 @@ def create_lyrics(country):
             for l in artist['lyrics']:
                 try: lyrics += l
                 except: pass
-    # lyrics = clean_words(lyrics, clean=False)
+    lyrics = clean_words(lyrics, clean=True)
     return make_response(generate(lyrics, maxlen = 500, n = 6))
 
 @app.route("/data/<country>")
@@ -136,6 +139,10 @@ def other_page(page_name):
     response = make_response(render_template('404.html'), 404)
     return response
 
+def select_country(text):
+    match = re.search(r"(?<=\/\s).*$", text)
+    return match.group()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.jinja_env.filters['select_country'] = select_country
+    app.run(debug=True, port=5000)

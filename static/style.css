@@ -5,8 +5,8 @@
     --pad: 20px;
 }
 
-html {
-    background: linear-gradient(to right,var(--pulse-dark) 0,var(--pulse-light) 100%);
+html, body {
+    font-family: 'Mali', cursive !important;
 }
 
 nav {
