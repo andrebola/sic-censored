@@ -1,0 +1,54 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}About{% endblock %}
+
+{% block navbar %}
+{{nav.top.render()}}
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<style>
+  .container > p{
+    margin: 0 60px 20px 30px;
+    font-size: 18px;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+  html > *, body > * {
+    font-family: 'Montserrat', sans-serif;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <h1>Team A</h1>
+
+  <h2>Manifesto</h2>
+  <p>Censorship as a means of rendering certain speeches and messages invisible directly affects the constitutional precepts of freedom of expression as set forth in Article 19 of the Universal Declaration of Human Rights</p>
+
+
+  <p>Likewise, any act that hinders or prevents the normal access to a certain work, piece or information ipso facto generates a conflict with the moral rights of the author that grant the power to decide about its disclosure and to demand the integrity of the piece or work. Both rights belong ipso uire to the author and his or her beneficiaries, given their inalienable and unrenounceable nature. This directly affects artists, cultural managers, graphic reporters, photojournalists and other agents in the cultural sector.</p>
+
+
+  <p>The censorship of the music sector in particular is presented from many perspectives: political opinions of various kinds, denunciation of the repression of indigenous groups or those at risk of exclusion, feminist empowerment or the defense of LGTBIQ.</p>
+
+
+  <p>Making visible the defenselessness and vulnerability of these works, especially those carried out by women, is a necessary and unavoidable approach to study censorship as a form of sexual repression. This is due to the fact that the woman's body is placed as the target of the punitive mechanisms of a patriarchal social political violence and a repressive cultural dimension that tries to fix the concept of femininity, repressing values that are contrary to it. This in particular is the basis of the censorship that women suffer as professionals and that causes their moral rights as authors to be violated.</p>
+
+	
+  <p>Also, in another hand, there is a directly relation with dscrimination and economy; money. The fact that some musicians have been discriminated correlates with lower incomes to that artists and predict a lower succesful in their careers.</p>
+  
+	
+  <p>This is directly related to mental health.</p>	 
+	  
+  <h4>Universal Declaration of Human Rights - Article 19:</h4>
+
+  <p><q>Everyone has the right to freedom of opinion and expression; this right includes freedom to hold opinions without interference and to seek, receive and impart information and ideas through any media and regardless of frontiers.</q></p>
+
+
+
+</div>
+{% endblock %}
