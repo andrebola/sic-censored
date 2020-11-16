@@ -9,51 +9,38 @@
 {{nav.top.render()}}
 {% endblock %}
 
-{% block styles %}
-{{super()}}
-<style>
-  .container > p{
-    margin: 0 60px 20px 30px;
-    font-size: 18px;
-    text-align: justify;
-    text-justify: inter-word;
-  }
-
-  html > *, body > * {
-    font-family: 'Montserrat', sans-serif;
-  }
-</style>
-{% endblock %}
-
 {% block content %}
-<meta charset="utf-8"/>
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Mali&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet"> 
 
-<style>
-	 
-	.image-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-	 
-</style>
 
 <div class="container">
-  <h1>forbidden territories<h1>
-  <div class="row">
-    <div class="col">
-      <h2 style="font-weight: normal !important;">the sónar+D innovation challenge (SIC) 2020<h2>
-  
-      <h2>music artist censorship and discrimination concept<h2>
-      <div class="image-container">
-        <img src="/static/sonar.svg"  height="60">
-        <img src="/static/FuturePulse_logo.png"  height="30">
-      </div>
-  </div>
+  <h1>Forbidden Territories </h1>
+    <!-- <h2>Sónar+D innovation challenge (SIC) 2020</h2> -->
+    <h2>Music censorship and discrimination</h2>
+      <p> Our main goals with that project are:</p>
+      <ul>
+        <li> Letting the artists know which words in what context and which lyrics are / were censored in every country.</li>
+        <li> Letting the artists know which in what context and which lyrics could be censored through the censorship predictive model.</li>
+        <li> Visualize censorship through data in every country.</li>
+        <li> Visualize which words are trending topics around the globe.</li>
+      </ul>
 </div>
-{% endblock %}
 
-{% block footer %}
+<div class="container">
+  <p></p>
+</div>
+
+<div class="container">
+  <img src="static/forbidden_img.jpg" class="img-circle" alt="image" height="400" width="400">
+</div>
+
+<div class="container">
+  <p></p>
+</div>
+
+<div class="container">
+  <!-- <div class="image-container"> -->
+    <img src="/static/sonar.svg" class="rounded pull-left" height="60">
+    <img src="/static/FuturePulse_logo.png" class="rounded pull-right" height="30">
+  <!-- </div> -->
+</div>
 {% endblock %}

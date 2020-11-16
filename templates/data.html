@@ -75,22 +75,18 @@
 <div class="container">
 	
 	<h1>{{data.name}}</h1>
-	<div class="row">
-		<div class="col">
       <h2>Playlist + Word Cloud</h2>
       <p>
         Below you can find {{ data.name  }}'s censored playlist and the word cloud of 
         the most common words found in the lyrics by those censored artists. 
       </p>
-			<div class="row" style="display: flex !important;">
-				<iframe src="{{data.playlist}}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+      
+			<div class="row" style="display: flex !important;"> 
+        <iframe src="{{data.playlist}}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 				<div id="wordcloud" style="width: 100%; height: 380px;"></div>
 			</div>
-    </div>
-  </div>
-  
-  <div class="row">
-		<div class="col">
+
+
       <h2>Lyrics generator</h2>
 			<div class="row" style="display: flex !important;">
         <div style="height: 380px; padding-right: 50px;">
@@ -113,10 +109,7 @@
         <div id="lyrics-wrapper" class="lyrics-wrapper">
           <p id="lyrics-wrapper-text" style="font-size: xx-large; text-align: center;">CHECK <br> IT OUT  </p>
         </div>
-			</div>
-    </div>
-	</div>
-	
+  	</div>
 </div>
 
 <script>

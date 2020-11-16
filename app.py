@@ -22,7 +22,7 @@ nav.register_element(
         View('Map', 'map'),
         View('Data', 'data_main'),
         View('Query', 'lyric_query'),
-        View('About', 'about'),
+        View('Team', 'about'),
         View('Manifesto', 'manifesto'),
         Link('github', 'https://github.com/andrebola/sic-censored'), 
     )
