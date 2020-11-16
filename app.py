@@ -6,7 +6,7 @@ from flask_nav import Nav
 from flask_nav.elements import *
 import glob
 import ftfy
-import re
+import os
 import unicodedata
 from collections import defaultdict
 from collections import Counter
@@ -136,9 +136,11 @@ def create_lyrics(country):
 
 @app.route("/data/<country>")
 def data(country):
-    data = json.load(open('data/{}.json'.format(escape(country.replace(".", "")))))
-    
-    return(render_template("data.html", country=country, data = data))
+    country_file = 'data/{}.json'.format(escape(country.replace(".", "")))
+    if os.path.isfile(country_file): 
+        data = json.load(open(country_file))
+        return(render_template("data.html", country=country, data = data))
+    return render_template('404.html', title = '404'), 404
 
 @app.route('/<page_name>')
 def other_page(page_name):
