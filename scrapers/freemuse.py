@@ -25,6 +25,8 @@ def get_args():
                         help='europe/africa/asia/north-south-america/middle-east-north-africa')
     parser.add_argument('-c', '--country', required=True, default='spain',
                         help='country')
+    parser.add_argument('-p', '--number_pages', required=False, default='4',
+                        help='number of pages to scrape')
     return parser.parse_args()
 
 
@@ -35,7 +37,11 @@ class FreemuseParser():
         
     def get_artists(self, region, country, number_pages=4):
         country = country.lower()
-        country_iso = pycountry.countries.get(name=country).alpha_2
+        if country=="usa":
+            country_iso = pycountry.countries.get(name="united states").alpha_2
+        else:
+            country_iso = pycountry.countries.get(name=country).alpha_2
+
         artists = set()
 
         for page_number in range(1,number_pages+1):
@@ -72,7 +78,7 @@ class FreemuseParser():
 if __name__ == "__main__":
     args = get_args()
     parser = FreemuseParser()
-    artists = parser.get_artists(args.region, args.country)
+    artists = parser.get_artists(args.region, args.country, number_pages=int(args.number_pages))
     print(artists)
 
 
