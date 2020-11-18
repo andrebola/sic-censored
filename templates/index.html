@@ -1,5 +1,5 @@
 {% extends "bootstrap/base.html" %}
-{% block title %}Forbidden territories{% endblock %}
+{% block title %}Home{% endblock %}
 
 {%- block metas %}
   <meta charset="utf-8"/>
@@ -14,14 +14,17 @@
 
 <div class="container">
   <h1>forbidden territories </h1>
+  <div class="container">
+    <img src="static/forbidden_img.jpg" class="img-circle" alt="image" height="300" width="300">
+  </div>
     <!-- <h2>Sónar+D innovation challenge (SIC) 2020</h2> -->
     <h2>music censorship and discrimination</h2>
-      <p> Our main goals with that project are:</p>
+      <p> Our main goals with this project are:</p>
       <ul>
-        <li> Letting the artists know which words in what context and which lyrics are / were censored in every country.</li>
-        <li> Letting the artists know which in what context and which lyrics could be censored through the censorship predictive model.</li>
-        <li> Visualize censorship through data in every country.</li>
-        <li> Visualize which words are trending topics around the globe.</li>
+        <li> Visualize censorship through data per country. <a href="{{ url_for('map') }}">Go to Map!</a></li>
+        <li> Know which tunes lyrics and words in context have been censored per country. <a href="{{ url_for('data_main') }}">Go to Playlist!</a></li>
+        <li> Know if specific lyrics are susceptible to censorship. <a href="{{ url_for('lyric_query') }}"> Go to Predictive Model!</a></li>
+        <li> Visualize which words/lyrics are trending around the globe. <a href="{{ url_for('data_main') }}">Go to Wordcloud!</a></li>
       </ul>
 </div>
 
@@ -29,9 +32,7 @@
   <p></p>
 </div>
 
-<div class="container">
-  <img src="static/forbidden_img.jpg" class="img-circle" alt="image" height="400" width="400">
-</div>
+
 
 <div class="container">
   <p></p>
